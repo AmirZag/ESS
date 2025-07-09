@@ -1,7 +1,8 @@
-name: ess_stack
-services:
+networks:
+  amard_network:
+    driver: bridge
 
-  #API
+services:
   ess.api:
     container_name: API
     image: ${DOCKER_REGISTRY-}essapi
@@ -9,8 +10,8 @@ services:
       context: .
       dockerfile: src/ESS.Api/Dockerfile
     ports:
-      - 5000:8080 #Http
-      - 5001:8081 #Https
+      - "${API_HTTP_PORT}:8080"
+      - "${API_HTTPS_PORT}:8081"
     environment:
       # Seq
       # - OTEL_EXPORTER_OTLP_ENDPOINT=http://ess.seq:5341/ingest/otlp
@@ -18,54 +19,88 @@ services:
       # Aspire Dashboard
       - OTEL_EXPORTER_OTLP_ENDPOINT=http://ess.aspire-dashboard:18889
       - OTEL_EXPORTER_OTLP_PROTOCOL=grpc
+      - ConnectionStrings__DatabaseConnectionString=${CONNECTIONSTRINGS__DATABASECONNECTIONSTRING}
+      - ConnectionStrings__IafDatabaseConnectionString=${CONNECTIONSTRINGS__IAFDATABASECONNECTIONSTRING}
+      - Jwt__Key=${JWT__KEY}
+      - Jwt__Issuer=${JWT__ISSUER}
+      - Jwt__Audiance=${JWT__AUDIANCE}
+      - Jwt__ExpirationInMinutes=${JWT__EXPIRATIONINMINUTES}
+      - Jwt__RefreshTokenExpirationDays=${JWT__REFRESHTOKENEXPIRATIONDAYS}
+      - SeedAdmin__PhoneNumber=${SEEDADMIN__PHONENUMBER}
+      - SeedAdmin__Password=${SEEDADMIN__PASSWORD}
+      - SeedAdmin__NationalCode=${SEEDADMIN__NATIONALCODE}
+      - SeedAdmin__Name=${SEEDADMIN__NAME}
+      - Encryption__Key=${ENCRYPTION__KEY}
+      - DOTNET_RUNNING_IN_CONTAINER=true
+      - ASPNETCORE_URLS=https://+:8081;http://+:8080
+      - ASPNETCORE_Kestrel__Endpoints__Https__Url=https://+:8081
+      - ASPNETCORE_Kestrel__Endpoints__Https__Certificate__Path=/certs/esscert.pfx
+      - ASPNETCORE_Kestrel__Endpoints__Https__Certificate__Password=${CERT_PASSWORD}
+      # CORS
+      - Cors__AllowedOrigins__0=${CORS__ALLOWEDORIGINS__0}
+      - Cors__AllowedOrigins__1=${CORS__ALLOWEDORIGINS__1}
+      - Cors__AllowedOrigins__2=${CORS__ALLOWEDORIGINS__2}
+      - Cors__AllowedOrigins__3=${CORS__ALLOWEDORIGINS__3}
+      - Cors__AllowedOrigins__4=${CORS__ALLOWEDORIGINS__4}
+      - Cors__AllowedOrigins__5=${CORS__ALLOWEDORIGINS__5}
+    volumes:
+      - ${REPORTS_PAYMENT}:/app/reports/payment
+      - ${REPORTS_PERSONNEL}:/app/reports/personnel-file
+      - ${CERT_FILE}:/certs/esscert.pfx:ro
     depends_on:
       - ess.postgres
+    networks:
+      - amard_network
 
-  #PostgreSQL
+
   ess.postgres:
     container_name: PostgresDatabase
     image: postgres:latest
     environment:
-      POSTGRES_DB: amard_ess
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
       - ./.containers/postgres_data:/var/lib/postgresql/data
     ports:
-      - 5432:5432
+      - "${POSTGRES_PORT}:5432"
+    networks:
+      - amard_network
 
-  #PGAdmin
   ess.pgadmin:
     container_name: PgAdmin
     image: dpage/pgadmin4:latest
     environment:
-      PGADMIN_DEFAULT_EMAIL: arezaqassemi@gmail.com
-      PGADMIN_DEFAULT_PASSWORD: postgres
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD}
     ports:
-      - 5050:80
-    depends_on:
-      - ess.postgres
+      - "${PGADMIN_PORT}:80"
     volumes:
       - ./.containers/pgadmin_data:/var/lib/pgadmin
+    depends_on:
+      - ess.postgres
+    networks:
+      - amard_network
 
-  #Seq
   ess.seq:
     container_name: SeqLogging
-    image: datalust/seq:latest # or latest
+    image: datalust/seq:latest
     environment:
       ACCEPT_EULA: "Y"
     volumes:
       - ./.containers/seq_data:/data
     ports:
-      - 8080:80
-      - 5341:5341
+      - "${SEQ_PORT_HTTP}:80"
+      - "${SEQ_PORT_INGEST}:5341"
+    networks:
+      - amard_network
 
-  #AspireDashboard
   ess.aspire-dashboard:
     container_name: AspireDashboard
     image: mcr.microsoft.com/dotnet/aspire-dashboard:9.3
     environment:
-      DOTNET_DASHBOARD_UNSECURED_ALLOW_ANONYMOUS: true
+      DOTNET_DASHBOARD_UNSECURED_ALLOW_ANONYMOUS: "true"
     ports:
-      - 18888:18888
-
+      - "${DASHBOARD_PORT}:18888"
+    networks:
+      - amard_network

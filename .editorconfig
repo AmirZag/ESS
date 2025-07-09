@@ -19,7 +19,7 @@ insert_final_newline = true
 # Organize usings
 dotnet_separate_import_directive_groups = false
 dotnet_sort_system_directives_first = true
-
+csharp_style_namespace_declarations = file_scoped:suggestion
 # this. and Me. preferences
 dotnet_style_qualification_for_event = false:error
 dotnet_style_qualification_for_field = false:error

@@ -366,3 +366,17 @@ FodyWeavers.xsd
 /.containers/postgres_data
 /.containers/pgadmin_data
 /src/ESS.Api/Database/Migrations/Application
+/src/ESS.Api/Database/Migrations/Identity
+/deployment-package
+.github/
+/config/SqlScripts/ApplicationDbContext_Migration.sql
+/config/SqlScripts/ApplicationDbContext_Migration.sql
+/esscert.pem
+/esskey.pem
+/esscert.pem
+/esscert.pfx
+/esskey.pem
+/certs
+/config/appsettings.Production.json
+/config/appsettings.Production.json
+*.env
