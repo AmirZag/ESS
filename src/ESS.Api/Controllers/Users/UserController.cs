@@ -8,13 +8,13 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 
-namespace ESS.Api.Controllers;
+namespace ESS.Api.Controllers.Users;
 [ResponseCache(Duration = 120)]
 [EnableRateLimiting("default")]
 [Authorize]
 [ApiController]
 [Route("users")]
-public sealed class UsersController(ApplicationDbContext dbContext, UserContext userContext) : ControllerBase
+public sealed class UserController(ApplicationDbContext dbContext, UserContext userContext) : ControllerBase
 {
     [HttpGet("{id}")]
     [Authorize(Roles = Roles.Admin)]
