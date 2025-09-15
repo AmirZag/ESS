@@ -1,6 +1,7 @@
 ﻿using ESS.Api.Database.DatabaseContext;
 using ESS.Api.Database.Entities.Settings;
 using ESS.Api.Database.Entities.Users;
+using ESS.Api.DTOs.Common;
 using ESS.Api.DTOs.Reports;
 using ESS.Api.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -16,7 +17,6 @@ namespace ESS.Api.Controllers;
 [Route("reports")]
 public sealed class ReportController(ApplicationDbContext dbContext, UserContext userContext) : ControllerBase
 {
-    private readonly string[] _allowedImageExtensions = { ".jpg", ".jpeg", ".png", ".pdf", ".tiff", ".bmp" };
 
     [HttpGet("payment")]
     public async Task<IActionResult> GetPaymentReport([FromQuery] PaymentReportQuery reportQuery)
@@ -134,7 +134,7 @@ public sealed class ReportController(ApplicationDbContext dbContext, UserContext
                 string extension = Path.GetExtension(file).ToLowerInvariant();
 
                 return fileNameWithoutExtension.Equals(expectedFileNamePattern, StringComparison.OrdinalIgnoreCase) &&
-                       _allowedImageExtensions.Contains(extension);
+                       FileValidationRules.AllowedImageExtensions.Contains(extension);
             });
     }
     private async Task<IActionResult> ReadAndReturnFileAsync(string filePath)
