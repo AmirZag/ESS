@@ -12,7 +12,8 @@ builder.AddApiServices()
        .AddApplicationServices()
        .AddAuthenticationServices()
        .AddCorsPolicy()
-       .AddRateLimiting();
+       .AddRateLimiting()
+       .AddMinioService();
 
 var app = builder.Build();
 

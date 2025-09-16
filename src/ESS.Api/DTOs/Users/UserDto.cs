@@ -9,4 +9,5 @@ public sealed class UserDto
     public required string PersonalCode { get; set; }
     public required DateTime CreatedAt { get; set; }
     public DateTime? UpdatedAt { get; set; }
+    public string? AvatarUrl { get; set; }
 }

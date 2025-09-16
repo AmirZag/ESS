@@ -15,7 +15,8 @@ internal static class UserQueries
             PhoneNumber = user.PhoneNumber,
             PersonalCode = user.PersonalCode,
             CreatedAt = user.CreatedAt,
-            UpdatedAt = user.UpdatedAt
+            UpdatedAt = user.UpdatedAt,
+            AvatarUrl = user.AvatarKey,
         };
 
     }

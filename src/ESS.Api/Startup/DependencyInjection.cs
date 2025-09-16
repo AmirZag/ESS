@@ -4,6 +4,7 @@ using Asp.Versioning;
 using ESS.Api.Database.DatabaseContext;
 using ESS.Api.Database.Entities.Employees.Repositories;
 using ESS.Api.Database.Entities.Settings;
+using ESS.Api.Database.Minio;
 using ESS.Api.DTOs.Settings;
 using ESS.Api.Extentions;
 using ESS.Api.Middleware.Exceptions;
@@ -16,6 +17,7 @@ using ESS.Api.Setup;
 using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Cors.Infrastructure;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Formatters;
@@ -23,7 +25,9 @@ using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.Extensions.Logging.Abstractions;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using Minio;
 using Newtonsoft.Json.Serialization;
 using Npgsql;
 using OpenTelemetry;
@@ -70,6 +74,13 @@ public static class DependencyInjection
                     .Template("application/vnd.amard-ecc.hateoas.{version}+json")
                     .Build());
         }).AddMvc();
+
+        builder.Services.Configure<FormOptions>(options =>
+        {
+            options.ValueLengthLimit = int.MaxValue;
+            options.MultipartBodyLengthLimit = 10 * 1024 * 1024;
+            options.MultipartHeadersLengthLimit = int.MaxValue;
+        });
 
         builder.Services.AddOpenApi();
 
@@ -166,7 +177,7 @@ public static class DependencyInjection
         builder.Services.AddTransient<EncryptionService>();
 
         builder.Services.AddSingleton<InMemoryETagStore>();
-
+        
         return builder;
     }
 
@@ -267,6 +278,25 @@ public static class DependencyInjection
                     );
             });
         });
+        return builder;
+    }
+
+    public static WebApplicationBuilder AddMinioService(this WebApplicationBuilder builder)
+    {
+        builder.Services.Configure<MinioConfiguration>(
+            builder.Configuration.GetSection("MinIO"));
+
+        builder.Services.AddSingleton<IMinioClient>(sp =>
+        {
+            var config = sp.GetRequiredService<IOptions<MinioConfiguration>>().Value;
+            return new MinioClient()
+                    .WithEndpoint(config.Endpoint)
+                    .WithCredentials(config.AccessKey, config.SecretKey)
+                    .WithSSL(config.UseSSL)
+                    .Build();
+        });
+
+        builder.Services.AddScoped<IMinioService, MinioService>();
         return builder;
     }
 }

@@ -14,6 +14,8 @@
     <PackageVersion Include="Microsoft.DependencyValidation.Analyzers" Version="0.11.0" />
     <PackageVersion Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.8" />
     <PackageVersion Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.8" />
+    <PackageVersion Include="Minio" Version="6.0.5" />
+    <PackageVersion Include="Minio.AspNetCore" Version="6.0.1" />
     <PackageVersion Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4" />
     <!--Project Requirements-->
     <PackageVersion Include="Microsoft.OpenApi" Version="1.6.25" />

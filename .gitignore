@@ -380,3 +380,4 @@ FodyWeavers.xsd
 /config/appsettings.Production.json
 /config/appsettings.Production.json
 *.env
+/.containers/minio_data/.minio.sys

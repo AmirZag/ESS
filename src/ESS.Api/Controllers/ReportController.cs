@@ -1,8 +1,8 @@
 ﻿using ESS.Api.Database.DatabaseContext;
 using ESS.Api.Database.Entities.Settings;
 using ESS.Api.Database.Entities.Users;
-using ESS.Api.DTOs.Common;
 using ESS.Api.DTOs.Reports;
+using ESS.Api.Options;
 using ESS.Api.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -44,12 +44,14 @@ public sealed class ReportController(ApplicationDbContext dbContext, UserContext
         return await GetReportFileAsync(AppSettingsKey.PersonnelFileImageFolderPath, fileNamePattern, "PersonnelFileReport");
     }
 
-    private async Task<string> GetPersonalCodeAsync()
+    private async Task<ActionResult<string>> GetPersonalCodeAsync()
     {
         string? userId = await userContext.GetUserIdAsync();
         if (string.IsNullOrWhiteSpace(userId))
         {
-            throw new UnauthorizedAccessException("User not authenticated.");
+            return Problem(
+                detail: "User not authenticated.",
+                statusCode: StatusCodes.Status401Unauthorized);
         }
 
         string? personalCode = await dbContext.Users
@@ -59,16 +61,17 @@ public sealed class ReportController(ApplicationDbContext dbContext, UserContext
 
         if (string.IsNullOrWhiteSpace(personalCode))
         {
-            throw new InvalidOperationException("Personal code not found.");
+            return Problem(
+                detail: "Personal code not found.",
+                statusCode: StatusCodes.Status404NotFound);
         }
 
-        return personalCode;
+        return Ok(personalCode);
     }
     private async Task<IActionResult> GetReportFileAsync(string settingsKey, string expectedFileNamePattern, string reportType)
     {
         try
         {
-            // Get folder path from settings
             string? imageFolderLocation = await dbContext.AppSettings
                 .Where(s => s.Key == settingsKey)
                 .Select(s => s.Value)
@@ -88,7 +91,6 @@ public sealed class ReportController(ApplicationDbContext dbContext, UserContext
                     detail: $"{reportType} folder does not exist.");
             }
 
-            // Find matching file
             string? foundImagePath = FindMatchingFile(imageFolderLocation, expectedFileNamePattern);
 
             if (string.IsNullOrEmpty(foundImagePath))
@@ -105,7 +107,6 @@ public sealed class ReportController(ApplicationDbContext dbContext, UserContext
                     detail: $"{reportType} file exists in directory but is not accessible.");
             }
 
-            // Read and return file
             return await ReadAndReturnFileAsync(foundImagePath);
         }
         catch (UnauthorizedAccessException)
@@ -134,7 +135,7 @@ public sealed class ReportController(ApplicationDbContext dbContext, UserContext
                 string extension = Path.GetExtension(file).ToLowerInvariant();
 
                 return fileNameWithoutExtension.Equals(expectedFileNamePattern, StringComparison.OrdinalIgnoreCase) &&
-                       FileValidationRules.AllowedImageExtensions.Contains(extension);
+                       FileValidationOptions.AllowedImageExtensions.Contains(extension);
             });
     }
     private async Task<IActionResult> ReadAndReturnFileAsync(string filePath)
@@ -143,17 +144,9 @@ public sealed class ReportController(ApplicationDbContext dbContext, UserContext
         {
             byte[] fileBytes = await System.IO.File.ReadAllBytesAsync(filePath);
             string fileName = Path.GetFileName(filePath);
-            string fileExtension = Path.GetExtension(filePath).ToLowerInvariant();
+            string fileExtension = Path.GetExtension(filePath);
 
-            string contentType = fileExtension switch
-            {
-                ".jpg" or ".jpeg" => "image/jpeg",
-                ".png" => "image/png",
-                ".pdf" => "application/pdf",
-                ".tiff" => "image/tiff",
-                ".bmp" => "image/bmp",
-                _ => "application/octet-stream"
-            };
+            string contentType = FileValidationOptions.GetContentType(fileExtension);
 
             return File(fileBytes, contentType, fileName);
         }

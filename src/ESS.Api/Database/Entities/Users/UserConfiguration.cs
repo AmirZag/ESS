@@ -25,6 +25,9 @@ public sealed class UserConfiguration : IEntityTypeConfiguration<User>
 
         builder.Property(u => u.CreatedAt).IsRequired();
 
+        builder.Property(u => u.AvatarKey)
+                .HasMaxLength(500);
+
         builder.HasIndex(u => u.IdentityId).IsUnique();
     }
 }
