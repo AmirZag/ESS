@@ -44,14 +44,12 @@ public sealed class ReportController(ApplicationDbContext dbContext, UserContext
         return await GetReportFileAsync(AppSettingsKey.PersonnelFileImageFolderPath, fileNamePattern, "PersonnelFileReport");
     }
 
-    private async Task<ActionResult<string>> GetPersonalCodeAsync()
+    private async Task<string> GetPersonalCodeAsync()
     {
         string? userId = await userContext.GetUserIdAsync();
         if (string.IsNullOrWhiteSpace(userId))
         {
-            return Problem(
-                detail: "User not authenticated.",
-                statusCode: StatusCodes.Status401Unauthorized);
+            throw new UnauthorizedAccessException("User not authenticated.");
         }
 
         string? personalCode = await dbContext.Users
@@ -61,12 +59,10 @@ public sealed class ReportController(ApplicationDbContext dbContext, UserContext
 
         if (string.IsNullOrWhiteSpace(personalCode))
         {
-            return Problem(
-                detail: "Personal code not found.",
-                statusCode: StatusCodes.Status404NotFound);
+            throw new InvalidOperationException("Personal code not found.");
         }
 
-        return Ok(personalCode);
+        return personalCode;
     }
     private async Task<IActionResult> GetReportFileAsync(string settingsKey, string expectedFileNamePattern, string reportType)
     {

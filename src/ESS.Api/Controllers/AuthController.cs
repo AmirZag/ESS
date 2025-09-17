@@ -99,7 +99,7 @@ public sealed class AuthController(
         applicationDbContext.Users.Add(user);
         await applicationDbContext.SaveChangesAsync();
 
-        var tokenRequest = new TokenRequest(identityUser.Id, identityUser.PhoneNumber , [Roles.Employee]);
+        var tokenRequest = new TokenRequestDto(identityUser.Id, identityUser.PhoneNumber , [Roles.Employee]);
         AccessTokensDto accessTokens = tokenProvider.Create(tokenRequest);
 
         var refreshToken = new RefreshToken
@@ -133,7 +133,7 @@ public sealed class AuthController(
 
         IList<string> roles = await userManager.GetRolesAsync(identityUser);
 
-        var tokenRequest = new TokenRequest(identityUser.Id, identityUser.PhoneNumber!, roles);
+        var tokenRequest = new TokenRequestDto(identityUser.Id, identityUser.PhoneNumber!, roles);
         AccessTokensDto accessTokens = tokenProvider.Create(tokenRequest);
 
         var refreshToken = new RefreshToken
@@ -169,7 +169,7 @@ public sealed class AuthController(
 
         IList<string> roles = await userManager.GetRolesAsync(refreshToken.User);
 
-        var tokenRequest = new TokenRequest(refreshToken.User.Id, refreshToken.User.PhoneNumber!, roles);
+        var tokenRequest = new TokenRequestDto(refreshToken.User.Id, refreshToken.User.PhoneNumber!, roles);
         AccessTokensDto accessTokens = tokenProvider.Create(tokenRequest);
 
         refreshToken.Token = accessTokens.RefreshToken;

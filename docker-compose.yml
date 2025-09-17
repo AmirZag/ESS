@@ -23,7 +23,7 @@ services:
       - ConnectionStrings__IafDatabaseConnectionString=${CONNECTIONSTRINGS__IAFDATABASECONNECTIONSTRING}
       - Jwt__Key=${JWT__KEY}
       - Jwt__Issuer=${JWT__ISSUER}
-      - Jwt__Audiance=${JWT__AUDIANCE}
+      - Jwt__Audience=${JWT__AUDIENCE}
       - Jwt__ExpirationInMinutes=${JWT__EXPIRATIONINMINUTES}
       - Jwt__RefreshTokenExpirationDays=${JWT__REFRESHTOKENEXPIRATIONDAYS}
       - SeedAdmin__PhoneNumber=${SEEDADMIN__PHONENUMBER}

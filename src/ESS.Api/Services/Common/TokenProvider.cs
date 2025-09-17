@@ -13,12 +13,12 @@ public sealed class TokenProvider(IOptions<JwtAuthOptions> options)
 {
     private readonly JwtAuthOptions _jwtAuthOptions = options.Value;
 
-    public AccessTokensDto Create(TokenRequest tokenRequest)
+    public AccessTokensDto Create(TokenRequestDto tokenRequest)
     {
         return new AccessTokensDto(GenerateAccessToken(tokenRequest), GenerateRefreshToken());
     }
 
-    private string GenerateAccessToken(TokenRequest tokenRequest)
+    private string GenerateAccessToken(TokenRequestDto tokenRequest)
     {
         var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtAuthOptions.Key));
         var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
@@ -36,7 +36,7 @@ public sealed class TokenProvider(IOptions<JwtAuthOptions> options)
             Expires = DateTime.UtcNow.AddMinutes(_jwtAuthOptions.ExpirationInMinutes),
             SigningCredentials = credentials,
             Issuer = _jwtAuthOptions.Issuer,
-            Audience = _jwtAuthOptions.Audiance,
+            Audience = _jwtAuthOptions.Audience,
         };
 
         var handler = new JsonWebTokenHandler();

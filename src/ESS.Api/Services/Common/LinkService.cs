@@ -18,11 +18,11 @@ public sealed class LinkService(LinkGenerator linkGenerator , IHttpContextAccess
             values
             );
 
-        return new LinkDto
-        {
-            Href = href ?? throw new Exception("Invalid endpoint name provided."),
-            Rel = rel,
-            Method = method,
-        };
+        return new LinkDto(
+            href ?? throw new Exception("Invalid endpoint name provided."),
+            rel,
+            method
+        );
+
     }
 }
