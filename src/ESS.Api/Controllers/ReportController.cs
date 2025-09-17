@@ -2,8 +2,8 @@
 using ESS.Api.Database.Entities.Settings;
 using ESS.Api.Database.Entities.Users;
 using ESS.Api.DTOs.Reports;
-using ESS.Api.Options;
 using ESS.Api.Services;
+using ESS.Api.Services.Common;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
@@ -135,7 +135,7 @@ public sealed class ReportController(ApplicationDbContext dbContext, UserContext
                 string extension = Path.GetExtension(file).ToLowerInvariant();
 
                 return fileNameWithoutExtension.Equals(expectedFileNamePattern, StringComparison.OrdinalIgnoreCase) &&
-                       FileValidationOptions.AllowedImageExtensions.Contains(extension);
+                       FileValidationHelper.AllowedImageExtensions.Contains(extension);
             });
     }
     private async Task<IActionResult> ReadAndReturnFileAsync(string filePath)
@@ -146,7 +146,7 @@ public sealed class ReportController(ApplicationDbContext dbContext, UserContext
             string fileName = Path.GetFileName(filePath);
             string fileExtension = Path.GetExtension(filePath);
 
-            string contentType = FileValidationOptions.GetContentType(fileExtension);
+            string contentType = FileValidationHelper.GetContentType(fileExtension);
 
             return File(fileBytes, contentType, fileName);
         }

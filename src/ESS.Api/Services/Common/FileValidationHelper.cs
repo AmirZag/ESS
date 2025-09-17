@@ -1,8 +1,8 @@
 ﻿using System.Collections.Frozen;
 
-namespace ESS.Api.Options;
+namespace ESS.Api.Services.Common;
 
-public static class FileValidationOptions
+public static class FileValidationHelper
 {
     public static readonly string[] AllowedImageExtensions =
         { ".jpg", ".jpeg", ".png", ".webp", ".gif" };

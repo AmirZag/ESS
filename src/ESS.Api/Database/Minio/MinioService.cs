@@ -1,4 +1,4 @@
-﻿using ESS.Api.Options;
+﻿using ESS.Api.Services.Common;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using Minio;
@@ -132,7 +132,7 @@ public sealed class MinioService(
             response.Position = 0;
 
             string extension = Path.GetExtension(objectKey);
-            string contentType = FileValidationOptions.GetContentType(extension);
+            string contentType = FileValidationHelper.GetContentType(extension);
 
             logger.LogDebug("Retrieved object: {ObjectKey}", objectKey);
             return (response, contentType, fileName);

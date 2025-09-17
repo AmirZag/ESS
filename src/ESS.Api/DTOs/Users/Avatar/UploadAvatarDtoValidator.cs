@@ -1,4 +1,4 @@
-﻿using ESS.Api.Options;
+﻿using ESS.Api.Services.Common;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 
@@ -31,7 +31,7 @@ public sealed class UploadAvatarDtoValidator : AbstractValidator<UploadAvatarDto
             return false;
         }
 
-        return FileValidationOptions.AllowedImageContentTypes.Contains(
+        return FileValidationHelper.AllowedImageContentTypes.Contains(
             file.ContentType.ToLowerInvariant());
     }
 
@@ -43,6 +43,6 @@ public sealed class UploadAvatarDtoValidator : AbstractValidator<UploadAvatarDto
         }
 
         var extension = Path.GetExtension(file.FileName).ToLowerInvariant();
-        return FileValidationOptions.AllowedImageExtensions.Contains(extension);
+        return FileValidationHelper.AllowedImageExtensions.Contains(extension);
     }
 }
