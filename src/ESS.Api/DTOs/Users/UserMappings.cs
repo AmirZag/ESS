@@ -19,4 +19,9 @@ public static class UserMappings
             CreatedAt = DateTime.UtcNow,
         };
     }
+
+    public static void UpdateFromDto(this User user)
+    {
+        user.UpdatedAt = DateTime.UtcNow;
+    }
 }

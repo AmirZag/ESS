@@ -18,7 +18,7 @@ namespace ESS.Api.Controllers.Users;
 [Authorize(Roles = Roles.Employee)]
 [ApiController]
 [EnableRateLimiting("default")]
-[Route("users/avatar")]
+[Route("users/me/avatar")]
 [ApiVersion("1.0")]
 [Produces(
     MediaTypeNames.Application.Json,
