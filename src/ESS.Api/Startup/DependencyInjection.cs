@@ -218,7 +218,7 @@ public static class DependencyInjection
         {
             options.AddPolicy(CorsOptions.PolicyName, policy =>
             {
-                policy.WithOrigins(corsOptions.AllowedOrigins ?? Array.Empty<string>())
+                policy.WithOrigins(corsOptions.AllowedOrigins ?? [])
                 .AllowAnyMethod()
                 .AllowAnyHeader()
                 .AllowCredentials();

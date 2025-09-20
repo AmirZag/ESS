@@ -73,9 +73,7 @@ public sealed class AppSettingsController(
 
         IQueryable<AppSettingsDto> appSettingsQuery = dbContext
             .AppSettings
-            .Where(s => query.Search == null ||
-                        s.Key.ToLower().Contains(query.Search) ||
-                        s.Description != null && s.Description.ToLower().Contains(query.Search))
+            .Where(s => query.Search == null || s.Key.ToLower().Contains(query.Search))
             .Where(s => query.Type == null || s.Type == query.Type)
             .ApplySort(query.Sort, sortMappings)
             .Select(AppSettingsQueries.ProjectToDto());
@@ -132,9 +130,7 @@ public sealed class AppSettingsController(
         }
 
         IQueryable<AppSettings> appSettingsQuery = dbContext.AppSettings
-            .Where(s => query.Search == null ||
-                        s.Key.ToLower().Contains(query.Search) ||
-                        s.Description != null && s.Description.ToLower().Contains(query.Search))
+            .Where(s => query.Search == null || s.Key.ToLower().Contains(query.Search))
             .Where(s => query.Type == null || s.Type == query.Type);
 
         if (!string.IsNullOrWhiteSpace(query.Cursor))
