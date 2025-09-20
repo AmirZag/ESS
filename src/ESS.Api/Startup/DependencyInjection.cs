@@ -8,7 +8,6 @@ using ESS.Api.Database.Minio;
 using ESS.Api.DTOs.Settings;
 using ESS.Api.Extentions;
 using ESS.Api.Middleware.Exceptions;
-using ESS.Api.Options;
 using ESS.Api.Services;
 using ESS.Api.Services.Caching;
 using ESS.Api.Services.Common;
@@ -16,7 +15,6 @@ using ESS.Api.Services.Sorting;
 using ESS.Api.Setup;
 using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -24,7 +22,6 @@ using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Migrations;
-using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Minio;
@@ -220,7 +217,7 @@ public static class DependencyInjection
         {
             options.AddPolicy(CorsOptions.PolicyName, policy =>
             {
-                policy.WithOrigins(corsOptions.AllowedOrigins)
+                policy.WithOrigins(corsOptions.AllowedOrigins ?? Array.Empty<string>())
                 .AllowAnyMethod()
                 .AllowAnyHeader()
                 .AllowCredentials();

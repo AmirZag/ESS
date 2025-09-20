@@ -219,7 +219,7 @@ public sealed class AppSettingsController(
         return Ok(ShapedAppSetting);
     }
 
-    [IdempotentRequest]
+    //[IdempotentRequest]
     [HttpPost]
     public async Task<ActionResult<AppSettingsDto>> CreateAppSettings(
         CreateAppSettingsDto createAppSettingsDto,

@@ -37,6 +37,7 @@
 
 	<ItemGroup>
 		<InternalsVisibleTo Include="ESS.UnitTests"/>
+		<InternalsVisibleTo Include="ESS.IntegrationTests"/>
 	</ItemGroup>
 	
 	<ItemGroup>

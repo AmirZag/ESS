@@ -76,7 +76,7 @@ services:
 
   ess.pgadmin:
     container_name: PgAdmin
-    image: dpage/pgadmin4:7.1
+    image: dpage/pgadmin4:9.8.0
     environment:
       PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL}
       PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD}
@@ -91,7 +91,7 @@ services:
 
   ess.seq:
     container_name: SeqLogging
-    image: datalust/seq:2024.1
+    image: datalust/seq:2025.2
     environment:
       ACCEPT_EULA: "Y"
     volumes:
