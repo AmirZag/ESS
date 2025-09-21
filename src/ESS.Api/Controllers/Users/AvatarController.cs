@@ -31,6 +31,17 @@ public sealed class AvatarController(ApplicationDbContext dbContext,
     ILogger<AvatarController> logger) : ControllerBase
 {
 
+    /// <summary>
+    /// Uploads a new avatar for the current user.
+    /// </summary>
+    /// <param name="uploadDto">The avatar file to upload.</param>
+    /// <param name="validator"></param>
+    /// <returns>The uploaded avatar information.</returns>
+    [ProducesResponseType(typeof(AvatarResponseDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [HttpPost]
     public async Task<ActionResult<AvatarResponseDto>> UploadAvatar(
         UploadAvatarDto uploadDto,
@@ -93,6 +104,14 @@ public sealed class AvatarController(ApplicationDbContext dbContext,
         }
     }
 
+    /// <summary>
+    /// Retrieves the current user's avatar.
+    /// </summary>
+    /// <returns>The avatar file.</returns>
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [HttpGet]
     public async Task<IActionResult> GetAvatar()
     {
@@ -128,6 +147,14 @@ public sealed class AvatarController(ApplicationDbContext dbContext,
         }
     }
 
+    /// <summary>
+    /// Deletes the current user's avatar.
+    /// </summary>
+    /// <returns>No content if deletion is successful.</returns>
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [HttpDelete]
     public async Task<IActionResult> DeleteAvatar()
     {

@@ -6,6 +6,8 @@
 		<DockerfileContext>..\..</DockerfileContext>
 		<DockerComposeProjectPath>..\..\docker-compose.dcproj</DockerComposeProjectPath>
 		<DockerComposeProjectName>amard.ess</DockerComposeProjectName>
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+		<NoWarn>$(NoWarn);1591</NoWarn>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -32,12 +34,14 @@
 		<PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" />
 		<PackageReference Include="OpenTelemetry.Instrumentation.Http" />
 		<PackageReference Include="OpenTelemetry.Instrumentation.Runtime" />
+		<PackageReference Include="Scalar.AspNetCore" />
+		<PackageReference Include="Swashbuckle.AspNetCore" />
 		<PackageReference Include="System.Linq.Dynamic.Core" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<InternalsVisibleTo Include="ESS.UnitTests"/>
-		<InternalsVisibleTo Include="ESS.IntegrationTests"/>
+		<InternalsVisibleTo Include="ESS.UnitTests" />
+		<InternalsVisibleTo Include="ESS.IntegrationTests" />
 	</ItemGroup>
 	
 	<ItemGroup>

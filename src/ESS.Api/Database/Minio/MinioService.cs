@@ -1,5 +1,4 @@
 ﻿using ESS.Api.Services.Common;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using Minio;
 using Minio.DataModel.Args;

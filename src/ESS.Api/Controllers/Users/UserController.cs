@@ -1,19 +1,13 @@
-﻿using System.Net;
-using System.Net.Mime;
-using System.Security.Claims;
-using ESS.Api.Database.DatabaseContext;
+﻿using ESS.Api.Database.DatabaseContext;
 using ESS.Api.Database.Entities.Users;
-using ESS.Api.DTOs.Common;
 using ESS.Api.DTOs.Users;
 using ESS.Api.Services;
-using ESS.Api.Services.Common;
 using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace ESS.Api.Controllers.Users;
 [ResponseCache(Duration = 120)]
@@ -23,8 +17,16 @@ namespace ESS.Api.Controllers.Users;
 [Route("users")]
 public sealed class UserController(ApplicationDbContext dbContext, UserContext userContext) : ControllerBase
 {
-    [EndpointSummary("Get a user by ID")]
-    [EndpointDescription("Retrieves a user by their unique identifier. This endpoint requires Admin role permissions.")]
+
+    /// <summary>
+    /// Retrieves a user by their unique ID.
+    /// </summary>
+    /// <param name="id">The user's unique identifier.</param>
+    /// <returns>The requested user information.</returns>
+    [ProducesResponseType(typeof(UserDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     [HttpGet("{id}")]
     [Authorize(Roles = Roles.Admin)]
     public async Task<ActionResult<UserDto>> GetUsersById(string id)
@@ -53,6 +55,13 @@ public sealed class UserController(ApplicationDbContext dbContext, UserContext u
         return Ok(user);
     }
 
+    /// <summary>
+    /// Retrieves the profile of the currently authenticated user.
+    /// </summary>
+    /// <returns>The current user's profile information.</returns>
+    [ProducesResponseType(typeof(UserDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     [EndpointSummary("Get current user's profile")]
     [EndpointDescription("Retrieves the profile information for the currently authenticated user.")]
     [HttpGet("me")]
@@ -77,9 +86,18 @@ public sealed class UserController(ApplicationDbContext dbContext, UserContext u
         return Ok(user);
     }
 
+    /// <summary>
+    /// Updates the profile information of the currently authenticated user.
+    /// </summary>
+    /// <param name="dto">The updated profile data.</param>
+    /// <param name="validator"></param>
+    /// <param name="userManager"></param>
+    /// <returns>No content if the update is successful.</returns>
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     [HttpPut("me/profile")]
-    [EndpointSummary("Update current user's profile")]
-    [EndpointDescription("Updates the profile information for the currently authenticated user.")]
     public async Task<IActionResult> UpdateProfile(
     UpdateProfileDto dto,
     IValidator<UpdateProfileDto> validator,

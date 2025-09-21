@@ -1,7 +1,5 @@
-﻿using System.Runtime.CompilerServices;
-using ESS.Api.Database.Entities.Users;
+﻿using ESS.Api.Database.Entities.Users;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace ESS.Api.Database.DatabaseContext;

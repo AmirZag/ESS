@@ -32,8 +32,18 @@ public sealed class AuthController(
 {
     private readonly JwtAuthOptions _jwtAuthOptions = options.Value;
 
+    /// <summary>
+    /// Registers a new employee user.
+    /// </summary>
+    /// <param name="employeeRepository"></param>
+    /// <param name="registerUserDto">The user registration details.</param>
+    /// <returns>Access tokens for the registered user.</returns>
+    [ProducesResponseType(typeof(AccessTokensDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [HttpPost("register")]
-    public async Task<ActionResult<AccessTokensDto>> Register(IEmployeeRepository employeeRepository, RegisterUserDto registerUserDto)
+    public async Task<ActionResult<AccessTokensDto>> Register(
+        IEmployeeRepository employeeRepository,
+        RegisterUserDto registerUserDto)
     {
 
         Employee employee = await employeeRepository.ValidateEmployee(registerUserDto.NationalCode, registerUserDto.PhoneNumber);
@@ -118,6 +128,14 @@ public sealed class AuthController(
         return Ok(accessTokens);
     }
 
+    /// <summary>
+    /// Authenticates a user and returns access tokens.
+    /// </summary>
+    /// <param name="loginUserDto">The user login credentials.</param>
+    /// <returns>Access tokens for the authenticated user.</returns>
+    [ProducesResponseType(typeof(AccessTokensDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [HttpPost("login")]
     public async Task<ActionResult<AccessTokensDto>> Login(LoginUserDto loginUserDto)
     {
@@ -150,6 +168,14 @@ public sealed class AuthController(
         return Ok(accessTokens);
     }
 
+    /// <summary>
+    /// Refreshes access tokens using a valid refresh token.
+    /// </summary>
+    /// <param name="refreshTokenDto">The refresh token.</param>
+    /// <returns>New access tokens for the user.</returns>
+    [ProducesResponseType(typeof(AccessTokensDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [HttpPost("refresh")]
     public async Task<ActionResult<AccessTokensDto>> Refresh(RefreshTokenDto refreshTokenDto)
     {

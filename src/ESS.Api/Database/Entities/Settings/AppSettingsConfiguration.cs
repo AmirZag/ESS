@@ -1,5 +1,4 @@
-﻿using ESS.Api.Database.Entities.Users;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace ESS.Api.Database.Entities.Settings;

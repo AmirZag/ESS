@@ -1,25 +1,37 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.Reflection;
+﻿namespace ESS.Api.Database.Entities.Settings;
 
-namespace ESS.Api.Database.Entities.Settings;
-
+/// <summary>
+/// Represents the different types of application settings.
+/// </summary>
 public enum AppSettingsType
 {
-    [Display(Name = "عمومی")]
+    /// <summary>
+    /// عمومی (General settings for the application).
+    /// </summary>
     General = 0,
 
-    [Display(Name = "امنیتی")]
+    /// <summary>
+    /// امنیتی (Security-related settings).
+    /// </summary>
     Security = 1,
 
-    [Display(Name = "کاربری")]
+    /// <summary>
+    /// کاربری (User-related settings).
+    /// </summary>
     Users = 2,
 
-    [Display(Name = "حسابداری")]
+    /// <summary>
+    /// حسابداری (Accounting settings).
+    /// </summary>
     Acc = 3,
 
-    [Display(Name = "کارگزینی")]
+    /// <summary>
+    /// کارگزینی (Human resource settings).
+    /// </summary>
     HumanResource = 4,
 
-    [Display(Name = "حقوق و دستمزد")]
+    /// <summary>
+    /// حقوق و دستمزد (Payroll settings).
+    /// </summary>
     Payroll = 5,
 }

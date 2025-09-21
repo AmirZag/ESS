@@ -11,6 +11,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ESS.Api.Controllers;
 
+[ProducesResponseType(StatusCodes.Status200OK)]
+[ProducesResponseType(StatusCodes.Status400BadRequest)]
 [EnableRateLimiting("default")]
 [Authorize(Roles = Roles.Employee)]
 [ApiController]
@@ -18,6 +20,11 @@ namespace ESS.Api.Controllers;
 public sealed class ReportController(ApplicationDbContext dbContext, UserContext userContext) : ControllerBase
 {
 
+    /// <summary>
+    /// Retrieves the payment report for a specific year, month, and level.
+    /// </summary>
+    /// <param name="reportQuery">Query parameters including Year, Month, and Level.</param>
+    /// <returns>The requested payment report file.</returns>
     [HttpGet("payment")]
     public async Task<IActionResult> GetPaymentReport([FromQuery] PaymentReportQuery reportQuery)
     {
@@ -31,6 +38,11 @@ public sealed class ReportController(ApplicationDbContext dbContext, UserContext
         return await GetReportFileAsync(AppSettingsKey.PaymentReportImageFolderPath, fileNamePattern, "PaymentReport");
     }
 
+    /// <summary>
+    /// Retrieves the personnel file report for a specific year.
+    /// </summary>
+    /// <param name="reportQuery">Query parameters including Year.</param>
+    /// <returns>The requested personnel file report file.</returns>
     [HttpGet("personnel-file")]
     public async Task<IActionResult> GetPersonnelFileReport([FromQuery] PersonnelFileReportQuery reportQuery)
     {

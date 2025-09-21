@@ -10,16 +10,11 @@ using ESS.Api.Services;
 using ESS.Api.Services.Common;
 using ESS.Api.Services.Sorting;
 using FluentValidation;
-using FluentValidation.Results;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Infrastructure;
-using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
-using OpenTelemetry.Trace;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace ESS.Api.Controllers;
 [EnableRateLimiting("default")]
@@ -37,8 +32,19 @@ public sealed class AppSettingsController(
     LinkService linkService,
     UserContext userContext) : ControllerBase
 {
-    [HttpGet]
+
+    /// <summary>
+    /// Retrieves a paginated list of application settings.
+    /// </summary>
+    /// <param name="query">Query parameters for filtering, sorting, paging, and shaping.</param>
+    /// <param name="sortMappingProvider"></param>
+    /// <param name="dataShapingService"></param>
+    /// <returns>Paginated list of application settings.</returns>
     [ResponseCache(Duration = 120)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(PaginationResult<ExpandoObject>), StatusCodes.Status200OK)]
+    [HttpGet]
     public async Task<IActionResult> GetAppSettings(
         [FromQuery] AppSettingsQueryParameters query,
         SortMappingProvider sortMappingProvider,
@@ -105,8 +111,17 @@ public sealed class AppSettingsController(
         return Ok(paginationResult);
     }
 
-    [HttpGet("cursor")]
+    /// <summary>
+    /// Retrieves application settings using cursor-based pagination.
+    /// </summary>
+    /// <param name="query">Cursor query parameters for filtering and paging.</param>
+    /// <param name="dataShapingService"></param>
+    /// <returns>Collection of application settings with optional next cursor.</returns>
+    [ProducesResponseType(typeof(CollectionResponse<ExpandoObject>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ResponseCache(Duration = 120)]
+    [HttpGet("cursor")]
     public async Task<IActionResult> GetAppSettingsCursor(
         [FromQuery] AppSettingsCursorQueryParameters query,
         DataShapingService dataShapingService)
@@ -172,6 +187,18 @@ public sealed class AppSettingsController(
         return Ok(paginationResult);
     }
 
+    /// <summary>
+    /// Retrieves a single application setting by ID.
+    /// </summary>
+    /// <param name="id">The unique identifier of the application setting.</param>
+    /// <param name="fields">Optional fields to shape the response.</param>
+    /// <param name="accept"></param>
+    /// <param name="dataShapingService"></param>
+    /// <returns>The requested application setting.</returns>
+    [ProducesResponseType(typeof(ExpandoObject), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ResponseCache(Duration = 120)]
     [HttpGet("{id}")]
     public async Task<IActionResult> GetAppSetting(
@@ -215,6 +242,16 @@ public sealed class AppSettingsController(
         return Ok(ShapedAppSetting);
     }
 
+    /// <summary>
+    /// Creates a new application setting.
+    /// </summary>
+    /// <param name="createAppSettingsDto">The application setting to create.</param>
+    /// <param name="validator"></param>
+    /// <returns>The created application setting.</returns>
+    [ProducesResponseType(typeof(AppSettingsDto), StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
     //[IdempotentRequest]
     [HttpPost]
     public async Task<ActionResult<AppSettingsDto>> CreateAppSettings(
@@ -248,6 +285,15 @@ public sealed class AppSettingsController(
         return CreatedAtAction(nameof(GetAppSettings), new { id = appSettingsDto.Id }, appSettingsDto);
     }
 
+    /// <summary>
+    /// Updates an existing application setting.
+    /// </summary>
+    /// <param name="id">The unique identifier of the application setting.</param>
+    /// <param name="updateAppSettingsDto">The updated application setting data.</param>
+    /// <returns>No content if update is successful.</returns>
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     [HttpPut("{id}")]
     public async Task<ActionResult> UpdateAppSettings(string id, UpdateAppSettingsDto updateAppSettingsDto)
     {
@@ -268,6 +314,15 @@ public sealed class AppSettingsController(
         return NoContent();
     }
 
+    /// <summary>
+    /// Partially updates an existing application setting.
+    /// </summary>
+    /// <param name="id">The unique identifier of the application setting.</param>
+    /// <param name="patchDocument">The JSON Patch document with update operations.</param>
+    /// <returns>No content if update is successful.</returns>
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     [HttpPatch("{id}")]
     public async Task<ActionResult> PatchAppSettings(string id, JsonPatchDocument<AppSettingsDto> patchDocument)
     {
@@ -298,6 +353,14 @@ public sealed class AppSettingsController(
         return NoContent();
     }
 
+    /// <summary>
+    /// Deletes an application setting by ID.
+    /// </summary>
+    /// <param name="id">The unique identifier of the application setting.</param>
+    /// <returns>No content if deletion is successful.</returns>
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [HttpDelete("{id}")]
     public async Task<ActionResult> DeleteAppSettings(string id)
     {
@@ -364,7 +427,6 @@ public sealed class AppSettingsController(
 
         return links;
     }
-
     private List<LinkDto> CreateLinksForAppSettingsCursor(
         AppSettingsCursorQueryParameters parameters,
         string? nextCursor)
@@ -396,7 +458,6 @@ public sealed class AppSettingsController(
 
         return links;
     }
-
     private List<LinkDto> CreateLinksForAppSettings(string id, string? fields)
     {
         User.IsInRole(Roles.Admin);

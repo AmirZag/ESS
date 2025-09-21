@@ -2,6 +2,7 @@ using ESS.Api.Database.DatabaseContext;
 using ESS.Api.Middleware.Caching;
 using ESS.Api.Options;
 using ESS.Api.Startup;
+using Scalar.AspNetCore;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
@@ -19,7 +20,15 @@ var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
 {
-    app.MapOpenApi();
+    //app.MapOpenApi();
+    app.UseSwagger();
+    app.UseSwaggerUI();
+
+    app.MapScalarApiReference(options =>
+    {
+        options.WithOpenApiRoutePattern("/swagger/v1/swagger.json");
+    });
+
     await app.ApplyMigrationsAsync();
 
     await app.SeedInitialDataAsync();

@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Reflection;
+using System.Text;
 using System.Threading.RateLimiting;
 using Asp.Versioning;
 using ESS.Api.Database.DatabaseContext;
@@ -24,6 +25,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using Minio;
 using Newtonsoft.Json.Serialization;
 using Npgsql;
@@ -31,6 +33,7 @@ using OpenTelemetry;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
+using Swashbuckle.AspNetCore.SwaggerGen;
 using CorsOptions = ESS.Api.Options.CorsOptions;
 
 namespace ESS.Api.Startup;
@@ -58,6 +61,8 @@ public static class DependencyInjection
             formatter.SupportedMediaTypes.Add(CustomeMediaTypeNames.Application.JsonV1);
         });
 
+        builder.Services.AddEndpointsApiExplorer();
+
         builder.Services.AddApiVersioning(options =>
         {
             options.DefaultApiVersion = new ApiVersion(1.0);
@@ -79,8 +84,43 @@ public static class DependencyInjection
             options.MultipartHeadersLengthLimit = int.MaxValue;
         });
 
-        builder.Services.AddOpenApi();
+        //builder.Services.AddOpenApi();
 
+        builder.Services.AddSwaggerGen(options =>
+        {
+            options.ResolveConflictingActions(description => description.First());
+            string xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+            string xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+            options.IncludeXmlComments(xmlPath);
+            options.DescribeAllParametersInCamelCase();
+            options.SchemaFilter<EnumSchemaFilter>();
+            //options.CustomSchemaIds(type => type.FullName?.Replace("+", "."));
+            options.AddSecurityDefinition("Bearer",
+                new OpenApiSecurityScheme
+                {
+                    Description = "JWT Authorization header using the bearer scheme. Example : \"Authorization: Bearer {token}\"",
+                    Name = "Authorization",
+                    In = ParameterLocation.Header,
+                    Type = SecuritySchemeType.ApiKey,
+                    Scheme = JwtBearerDefaults.AuthenticationScheme,
+                });
+            options.AddSecurityRequirement(new OpenApiSecurityRequirement
+            {
+                {
+                    new OpenApiSecurityScheme
+                    {
+                        Reference = new OpenApiReference
+                        {
+                            Type = ReferenceType.SecurityScheme,
+                            Id = "Bearer"
+                        }
+                    },
+                    Array.Empty<string>()
+                }
+            });
+            options.UseInlineDefinitionsForEnums();
+        });
+        
         builder.Services.AddResponseCaching();
 
         builder.Services.AddOutputCache();
@@ -174,7 +214,7 @@ public static class DependencyInjection
         builder.Services.AddTransient<EncryptionService>();
 
         builder.Services.AddSingleton<InMemoryETagStore>();
-        
+
         return builder;
     }
 
@@ -266,14 +306,14 @@ public static class DependencyInjection
                             TokensPerPeriod = 25
                         });
                 }
-                    return RateLimitPartition.GetFixedWindowLimiter(
-                        "anonymous",
-                        _ => new FixedWindowRateLimiterOptions
-                        {
-                            PermitLimit = 5,
-                            Window = TimeSpan.FromMinutes(1)
-                        }
-                    );
+                return RateLimitPartition.GetFixedWindowLimiter(
+                    "anonymous",
+                    _ => new FixedWindowRateLimiterOptions
+                    {
+                        PermitLimit = 5,
+                        Window = TimeSpan.FromMinutes(1)
+                    }
+                );
             });
         });
         return builder;

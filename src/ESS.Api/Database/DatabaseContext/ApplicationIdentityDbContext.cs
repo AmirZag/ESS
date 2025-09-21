@@ -1,5 +1,4 @@
-﻿using System.Reflection.Emit;
-using ESS.Api.Database.Entities.Token;
+﻿using ESS.Api.Database.Entities.Token;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
