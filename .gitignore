@@ -381,3 +381,4 @@ FodyWeavers.xsd
 /config/appsettings.Production.json
 *.env
 /.containers/minio_data/.minio.sys
+/.containers/minio_data/ess-bucket/avatars/u_01990eb9-52cc-7501-9b94-7ed5690dd990/01997653-2e7f-77f6-8a90-41927b8d75e7.jpg/11fe2ff9-8445-47cb-86d8-af88482d8107

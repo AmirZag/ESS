@@ -1,4 +1,4 @@
-﻿namespace ESS.Api.Services.Sms;
+﻿namespace ESS.Api.Services.Common.Interfaces;
 
 public interface ISmsService
 {

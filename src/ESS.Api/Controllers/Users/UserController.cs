@@ -120,7 +120,8 @@ public sealed class UserController(ApplicationDbContext dbContext, UserContext u
 
         bool isChanged = false;
 
-        if (!string.Equals(user.PhoneNumber, dto.PhoneNumber, StringComparison.Ordinal))
+        if (!string.IsNullOrWhiteSpace(dto.PhoneNumber) 
+            && !string.Equals(user.PhoneNumber, dto.PhoneNumber, StringComparison.Ordinal))
         {
             var exists = await dbContext.Users
                 .AnyAsync(u => u.PhoneNumber == dto.PhoneNumber && u.Id != userId);
@@ -129,7 +130,7 @@ public sealed class UserController(ApplicationDbContext dbContext, UserContext u
                 return Problem(statusCode: 400, detail: "Phone number already in use");
             }
 
-            user.PhoneNumber = dto.PhoneNumber;
+            user.PhoneNumber = dto.PhoneNumber!;
             identityUser.PhoneNumber = dto.PhoneNumber;
             isChanged = true;
         }
@@ -148,7 +149,7 @@ public sealed class UserController(ApplicationDbContext dbContext, UserContext u
 
         if (isChanged)
         {
-            user.UpdateFromDto();
+            user.Touch();
             await dbContext.SaveChangesAsync();
             await userManager.UpdateAsync(identityUser);
         }

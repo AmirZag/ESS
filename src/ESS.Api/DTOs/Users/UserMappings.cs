@@ -20,7 +20,7 @@ public static class UserMappings
         };
     }
 
-    public static void UpdateFromDto(this User user)
+    public static void Touch(this User user)
     {
         user.UpdatedAt = DateTime.UtcNow;
     }

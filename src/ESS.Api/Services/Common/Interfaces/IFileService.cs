@@ -1,6 +1,8 @@
-﻿namespace ESS.Api.Database.Minio;
+﻿using ESS.Api.Infrastructure.Minio;
 
-public interface IMinioService
+namespace ESS.Api.Services.Common.Interfaces;
+
+public interface IFileService
 {
     Task<MinioUploadResult> UploadFileAsync(Stream fileStream, string objectName, string contentType);
     Task<string> GetPresignedUrlAsync(string objectName, int expiryInSeconds = 3600);

@@ -1,5 +1,5 @@
 ﻿using ESS.Api.Database.DatabaseContext;
-using ESS.Api.Extentions;
+using ESS.Api.Helpers.Extentions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 

@@ -1,11 +1,11 @@
 ﻿
 using System.Net.Http;
-using ESS.Api.DTOs.Sms;
-using ESS.Api.Options;
+using ESS.Api.Infrastructure.Sms.Dto;
+using ESS.Api.Services.Common.Interfaces;
 using Microsoft.Extensions.Options;
 using static System.Net.Mime.MediaTypeNames;
 
-namespace ESS.Api.Services.Sms;
+namespace ESS.Api.Infrastructure.Sms;
 
 public sealed class MelliPayamakSmsService(
     IHttpClientFactory httpClientFactory,

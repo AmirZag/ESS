@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Reflection;
 
-namespace ESS.Api.Extentions;
+namespace ESS.Api.Helpers.Extentions;
 
 public static class EnumExtensions
 {

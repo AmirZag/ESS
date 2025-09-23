@@ -2,8 +2,8 @@
 using ESS.Api.Database.Entities.Settings;
 using ESS.Api.Database.Entities.Users;
 using ESS.Api.DTOs.Reports;
+using ESS.Api.Helpers;
 using ESS.Api.Services;
-using ESS.Api.Services.Common;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;

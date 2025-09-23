@@ -2,10 +2,10 @@
 using Asp.Versioning;
 using ESS.Api.Database.DatabaseContext;
 using ESS.Api.Database.Entities.Users;
-using ESS.Api.Database.Minio;
 using ESS.Api.DTOs.Users.Avatar;
+using ESS.Api.Helpers;
 using ESS.Api.Services;
-using ESS.Api.Services.Common;
+using ESS.Api.Services.Common.Interfaces;
 using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -27,7 +27,7 @@ namespace ESS.Api.Controllers.Users;
     CustomeMediaTypeNames.Application.HateoasJsonV1)]
 public sealed class AvatarController(ApplicationDbContext dbContext, 
     UserContext userContext, 
-    IMinioService minioService, 
+    IFileService minioService, 
     ILogger<AvatarController> logger) : ControllerBase
 {
 

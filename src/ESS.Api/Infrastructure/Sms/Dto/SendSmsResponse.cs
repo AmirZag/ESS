@@ -1,4 +1,4 @@
-﻿namespace ESS.Api.DTOs.Sms;
+﻿namespace ESS.Api.Infrastructure.Sms.Dto;
 
 public sealed class SendSmsResponse
 {

@@ -1,4 +1,4 @@
-﻿namespace ESS.Api.Services.Common;
+﻿namespace ESS.Api.Helpers;
 
 public static class CustomeMediaTypeNames
 {

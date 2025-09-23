@@ -1,15 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Net;
 using System.Net.Http.Json;
-using System.Text;
-using System.Threading.Tasks;
 using ESS.Api.Database.Entities.Settings;
 using ESS.Api.DTOs.Settings;
 using ESS.IntegrationTests.Infrastructure;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Admin = ESS.IntegrationTests.Infrastructure.StaticParameters.MockUsers.ValidAdmin;
 using AppSettings = ESS.IntegrationTests.Infrastructure.StaticParameters.Routes.AppSettings;
-using System.Net;
 
 namespace ESS.IntegrationTests.Tests;
 public sealed class SettingsTests(EssWebAppFactory factory) : IntegrationTestFixture(factory)
@@ -39,4 +36,32 @@ public sealed class SettingsTests(EssWebAppFactory factory) : IntegrationTestFix
 
     }
 
+    [Fact]
+    public async Task CreateSettings_ShouldFail_WithInValidParameters()
+    {
+        var dto = new CreateAppSettingsDto
+        {
+            Key = "Settings",
+            Type = AppSettingsType.Security,
+            Value = "1",
+            Description = "Just for Testing Purposes"
+        };
+
+        var client = await CreateAuthenticatedClientAsync(Admin.NationalCode, Admin.Password);
+
+        //Act
+        HttpResponseMessage response = await client.PostAsJsonAsync(AppSettings.Settings, dto);
+
+        // Assert
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+
+        Uri? locationHeader = response.Headers.Location;
+        Assert.Null(locationHeader);
+
+        ValidationProblemDetails? problem = await response.Content.ReadFromJsonAsync<ValidationProblemDetails>();
+
+        Assert.NotNull(problem);
+        Assert.Equal(StatusCodes.Status400BadRequest, problem.Status);
+
+    }
 }

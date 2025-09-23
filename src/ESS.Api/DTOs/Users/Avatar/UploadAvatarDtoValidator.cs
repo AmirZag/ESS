@@ -1,4 +1,4 @@
-﻿using ESS.Api.Services.Common;
+﻿using ESS.Api.Helpers;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 

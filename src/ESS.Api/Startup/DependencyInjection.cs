@@ -5,15 +5,17 @@ using Asp.Versioning;
 using ESS.Api.Database.DatabaseContext;
 using ESS.Api.Database.Entities.Employees.Repositories;
 using ESS.Api.Database.Entities.Settings;
-using ESS.Api.Database.Minio;
 using ESS.Api.DTOs.Settings;
-using ESS.Api.Extentions;
+using ESS.Api.Helpers;
+using ESS.Api.Helpers.Extentions;
+using ESS.Api.Infrastructure.Minio;
+using ESS.Api.Infrastructure.Sms;
+using ESS.Api.Infrastructure.Sms.Dto;
 using ESS.Api.Middleware.Exceptions;
-using ESS.Api.Options;
 using ESS.Api.Services;
 using ESS.Api.Services.Caching;
 using ESS.Api.Services.Common;
-using ESS.Api.Services.Sms;
+using ESS.Api.Services.Common.Interfaces;
 using ESS.Api.Services.Sorting;
 using ESS.Api.Setup;
 using FluentValidation;
@@ -336,7 +338,7 @@ public static class DependencyInjection
                     .Build();
         });
 
-        builder.Services.AddScoped<IMinioService, MinioService>();
+        builder.Services.AddScoped<IFileService, MinioService>();
         return builder;
     }
 

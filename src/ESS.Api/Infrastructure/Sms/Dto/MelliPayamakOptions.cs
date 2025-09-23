@@ -1,4 +1,4 @@
-﻿namespace ESS.Api.Options;
+﻿namespace ESS.Api.Infrastructure.Sms.Dto;
 
 public sealed class MelliPayamakOptions
 {

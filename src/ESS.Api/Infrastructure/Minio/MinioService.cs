@@ -1,15 +1,16 @@
-﻿using ESS.Api.Services.Common;
+﻿using ESS.Api.Helpers;
+using ESS.Api.Services.Common.Interfaces;
 using Microsoft.Extensions.Options;
 using Minio;
 using Minio.DataModel.Args;
 using Minio.Exceptions;
 
-namespace ESS.Api.Database.Minio;
+namespace ESS.Api.Infrastructure.Minio;
 
 public sealed class MinioService(
     IMinioClient minioClient,
     IOptions<MinioConfiguration> options,
-    ILogger<MinioService> logger) : IMinioService
+    ILogger<MinioService> logger) : IFileService
 {
     public async Task<MinioUploadResult> UploadFileAsync(
             Stream fileStream,

@@ -1,4 +1,4 @@
-﻿namespace ESS.Api.Database.Minio;
+﻿namespace ESS.Api.Infrastructure.Minio;
 
 public sealed class MinioUploadResult
 {
