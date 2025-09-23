@@ -21,17 +21,21 @@ services:
       - OTEL_EXPORTER_OTLP_PROTOCOL=grpc
       - ConnectionStrings__DatabaseConnectionString=${CONNECTIONSTRINGS__DATABASECONNECTIONSTRING}
       - ConnectionStrings__IafDatabaseConnectionString=${CONNECTIONSTRINGS__IAFDATABASECONNECTIONSTRING}
+      #JWT
       - Jwt__Key=${JWT__KEY}
       - Jwt__Issuer=${JWT__ISSUER}
       - Jwt__Audience=${JWT__AUDIENCE}
       - Jwt__ExpirationInMinutes=${JWT__EXPIRATIONINMINUTES}
       - Jwt__RefreshTokenExpirationDays=${JWT__REFRESHTOKENEXPIRATIONDAYS}
+      #SeedAdmin 
       - SeedAdmin__PhoneNumber=${SEEDADMIN__PHONENUMBER}
       - SeedAdmin__Password=${SEEDADMIN__PASSWORD}
       - SeedAdmin__NationalCode=${SEEDADMIN__NATIONALCODE}
       - SeedAdmin__Name=${SEEDADMIN__NAME}
+      #EncryptionKey
       - Encryption__Key=${ENCRYPTION__KEY}
-      - DOTNET_RUNNING_IN_CONTAINER=true
+      #- DOTNET_RUNNING_IN_CONTAINER=true
+      #Kestrel
       - ASPNETCORE_URLS=https://+:8081;http://+:8080
       - ASPNETCORE_Kestrel__Endpoints__Https__Url=https://+:8081
       - ASPNETCORE_Kestrel__Endpoints__Https__Certificate__Path=/certs/esscert.pfx
@@ -49,6 +53,12 @@ services:
       - MinIO__SecretKey=${MINIO_SECRET_KEY}
       - MinIO__BucketName=${MINIO_BUCKET_NAME}
       - MinIO__UseSSL=${MINIO_USE_SSL}
+      #MelliPayamak
+      - MelliPayamak__Username=${MELLIPAYAMAK_USERNAME}
+      - MelliPayamak__Password=${MELLIPAYAMAK_PASSWORD}
+      - MelliPayamak__FromNumber=${MELLIPAYAMAK_FROM_NUMBER}
+      - MelliPayamak__ApiUrl=${MELLIPAYAMAK_API_URL}
+      - MelliPayamak__VerificationTemplate=${MELLIPAYAMAK_VERIFICATION_TEMPLATE}
     volumes:
       - ${REPORTS_PAYMENT}:/app/reports/payment
       - ${REPORTS_PERSONNEL}:/app/reports/personnel-file

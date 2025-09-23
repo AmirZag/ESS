@@ -9,9 +9,11 @@ using ESS.Api.Database.Minio;
 using ESS.Api.DTOs.Settings;
 using ESS.Api.Extentions;
 using ESS.Api.Middleware.Exceptions;
+using ESS.Api.Options;
 using ESS.Api.Services;
 using ESS.Api.Services.Caching;
 using ESS.Api.Services.Common;
+using ESS.Api.Services.Sms;
 using ESS.Api.Services.Sorting;
 using ESS.Api.Setup;
 using FluentValidation;
@@ -120,7 +122,7 @@ public static class DependencyInjection
             });
             options.UseInlineDefinitionsForEnums();
         });
-        
+
         builder.Services.AddResponseCaching();
 
         builder.Services.AddOutputCache();
@@ -335,6 +337,18 @@ public static class DependencyInjection
         });
 
         builder.Services.AddScoped<IMinioService, MinioService>();
+        return builder;
+    }
+
+    public static WebApplicationBuilder AddSmsService(this WebApplicationBuilder builder)
+    {
+        builder.Services.Configure<MelliPayamakOptions>(
+            builder.Configuration.GetSection("MelliPayamak"));
+
+        builder.Services.AddHttpClient();
+
+        builder.Services.AddScoped<ISmsService, MelliPayamakSmsService>();
+
         return builder;
     }
 }

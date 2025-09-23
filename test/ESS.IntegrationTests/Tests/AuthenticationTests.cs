@@ -37,24 +37,6 @@ public sealed class AuthenticationTests(EssWebAppFactory factory) : IntegrationT
     }
 
     [Fact]
-    public async Task LoginAdmin_ShouldSucceed_WithValidParameters()
-    {
-        //Arrange
-        var dto = new LoginUserDto
-        {
-            NationalCode = Admin.NationalCode,
-            Password = Admin.Password,
-        };
-        HttpClient client = CreateClient();
-
-        //Act
-        HttpResponseMessage response = await client.PostAsJsonAsync(Auth.Login, dto);
-
-        //Assert
-        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-    }
-
-    [Fact]
     public async Task Register_ShouldFail_WithInValidParameters()
     {
         //Arrange
@@ -95,6 +77,24 @@ public sealed class AuthenticationTests(EssWebAppFactory factory) : IntegrationT
     }
 
     [Fact]
+    public async Task LoginAdmin_ShouldSucceed_WithValidParameters()
+    {
+        //Arrange
+        var dto = new LoginUserDto
+        {
+            NationalCode = Admin.NationalCode,
+            Password = Admin.Password,
+        };
+        HttpClient client = CreateClient();
+
+        //Act
+        HttpResponseMessage response = await client.PostAsJsonAsync(Auth.Login, dto);
+
+        //Assert
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+    }
+    [Fact]
+
     public async Task LoginAdmin_ShouldReturnAccessTokens_WithValidParameters()
     {
         //Arrange
