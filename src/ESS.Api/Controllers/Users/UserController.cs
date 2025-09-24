@@ -1,7 +1,7 @@
-﻿using ESS.Api.Database.DatabaseContext;
+﻿using ESS.Api.Database.DatabaseContext.ApplicationDbContexts;
 using ESS.Api.Database.Entities.Users;
 using ESS.Api.DTOs.Users;
-using ESS.Api.Services;
+using ESS.Api.Services.Common;
 using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;

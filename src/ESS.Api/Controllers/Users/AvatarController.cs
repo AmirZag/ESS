@@ -1,10 +1,10 @@
 ﻿using System.Net.Mime;
 using Asp.Versioning;
-using ESS.Api.Database.DatabaseContext;
+using ESS.Api.Database.DatabaseContext.ApplicationDbContexts;
 using ESS.Api.Database.Entities.Users;
 using ESS.Api.DTOs.Users.Avatar;
 using ESS.Api.Helpers;
-using ESS.Api.Services;
+using ESS.Api.Services.Common;
 using ESS.Api.Services.Common.Interfaces;
 using FluentValidation;
 using Microsoft.AspNetCore.Authorization;

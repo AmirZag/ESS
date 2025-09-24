@@ -1,4 +1,4 @@
-﻿using ESS.Api.Database.DatabaseContext;
+﻿using ESS.Api.Database.DatabaseContext.ExternalDbContexts;
 using Microsoft.EntityFrameworkCore;
 
 namespace ESS.Api.Database.Entities.Employees.Repositories;

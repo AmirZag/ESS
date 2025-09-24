@@ -2,7 +2,7 @@
 using ESS.Api.Database.Entities.Users;
 using Microsoft.EntityFrameworkCore;
 
-namespace ESS.Api.Database.DatabaseContext;
+namespace ESS.Api.Database.DatabaseContext.ApplicationDbContexts;
 
 public sealed class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : DbContext(options)
 {

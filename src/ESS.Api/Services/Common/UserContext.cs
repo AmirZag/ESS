@@ -1,9 +1,9 @@
-﻿using ESS.Api.Database.DatabaseContext;
+﻿using ESS.Api.Database.DatabaseContext.ApplicationDbContexts;
 using ESS.Api.Helpers.Extentions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 
-namespace ESS.Api.Services;
+namespace ESS.Api.Services.Common;
 
 public sealed class UserContext(
     IHttpContextAccessor httpContextAccessor,

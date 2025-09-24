@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.Extensions.Configuration;
 
-namespace ESS.Api.Database.DatabaseContext;
+namespace ESS.Api.Database.DatabaseContext.ApplicationDbContexts;
 
 public class ApplicationIdentityDbContextFactory : IDesignTimeDbContextFactory<ApplicationIdentityDbContext>
 {

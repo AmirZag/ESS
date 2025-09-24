@@ -1,6 +1,6 @@
 ﻿using System.Net.Http.Headers;
 using System.Net.Http.Json;
-using ESS.Api.Database.DatabaseContext;
+using ESS.Api.Database.DatabaseContext.ApplicationDbContexts;
 using ESS.Api.DTOs.Auth;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;

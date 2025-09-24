@@ -1,7 +1,7 @@
 ﻿using ESS.Api.Database.Entities.Employees;
 using Microsoft.EntityFrameworkCore;
 
-namespace ESS.Api.Database.DatabaseContext;
+namespace ESS.Api.Database.DatabaseContext.ExternalDbContexts;
 
 public sealed class IafDbContext(DbContextOptions<IafDbContext> options) : DbContext(options)
 {

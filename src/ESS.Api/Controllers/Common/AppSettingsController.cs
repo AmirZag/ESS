@@ -1,13 +1,12 @@
 ﻿using System.Dynamic;
 using System.Net.Mime;
 using Asp.Versioning;
-using ESS.Api.Database.DatabaseContext;
+using ESS.Api.Database.DatabaseContext.ApplicationDbContexts;
 using ESS.Api.Database.Entities.Settings;
 using ESS.Api.Database.Entities.Users;
 using ESS.Api.DTOs.Common;
 using ESS.Api.DTOs.Settings;
 using ESS.Api.Helpers;
-using ESS.Api.Services;
 using ESS.Api.Services.Common;
 using ESS.Api.Services.Sorting;
 using FluentValidation;
@@ -17,7 +16,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 
-namespace ESS.Api.Controllers;
+namespace ESS.Api.Controllers.Common;
 [EnableRateLimiting("default")]
 [Authorize(Roles = Roles.Admin)]
 [ApiController]
