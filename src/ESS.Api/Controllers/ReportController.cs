@@ -56,6 +56,97 @@ public sealed class ReportController(ApplicationDbContext dbContext, UserContext
         return await GetReportFileAsync(AppSettingsKey.PersonnelFileImageFolderPath, fileNamePattern, "PersonnelFileReport");
     }
 
+    /// <summary>
+    /// Gets the latest Year, Month and Level of the PaymentReport.
+    /// </summary>
+    /// <returns>The latest Year, Month and Level.</returns>
+    [HttpGet("payment/latest")]
+    public async Task<IActionResult> GetLatestYearMonthLevel()
+    {
+        string personalCode = await GetPersonalCodeAsync();
+        string folder = await dbContext.AppSettings
+            .Where(s => s.Key == AppSettingsKey.PaymentReportImageFolderPath)
+            .Select(s => s.Value)
+            .FirstOrDefaultAsync() ?? string.Empty;
+
+        if (string.IsNullOrWhiteSpace(folder) || !Directory.Exists(folder))
+        {
+            return Problem(statusCode: 500, detail: "PaymentReport folder not configured or missing.");
+        }
+
+        var latest = Directory.GetFiles(folder, $"{personalCode}-*.*")
+            .Select(f => Path.GetFileNameWithoutExtension(f))
+            .Select(name =>
+            {
+                var parts = name.Split('-');
+                if (parts.Length < 4)
+                {
+                    return null;
+                }
+
+                return new
+                {
+                    Year = int.TryParse(parts[1], out int y) ? y : 0,
+                    Month = int.TryParse(parts[2], out int m) ? m : 0,
+                    Level = int.TryParse(parts[3], out int l) ? l : 0
+                };
+            })
+            .Where(x => x != null && x.Year > 0 && x.Month > 0 && x.Level > 0)
+            .OrderByDescending(x => x!.Year)
+            .ThenByDescending(x => x!.Month)
+            .ThenByDescending(x => x!.Level)
+            .FirstOrDefault();
+
+        if (latest == null)
+        {
+            return NotFound();
+        }
+
+        return Ok(latest);
+    }
+
+    /// <summary>
+    /// Gets the latest Year of the PersonnelFileReport.
+    /// </summary>
+    /// <returns>The latest Year.</returns>
+    [HttpGet("personnel-file/latest")]
+    public async Task<IActionResult> GetLatestYear()
+    {
+        string personalCode = await GetPersonalCodeAsync();
+        string folder = await dbContext.AppSettings
+            .Where(s => s.Key == AppSettingsKey.PersonnelFileImageFolderPath)
+            .Select(s => s.Value)
+            .FirstOrDefaultAsync() ?? string.Empty;
+
+        if (string.IsNullOrWhiteSpace(folder) || !Directory.Exists(folder))
+        {
+            return Problem(statusCode: 500, detail: "PersonnelFileReport folder not configured or missing.");
+        }
+
+        var latest = Directory.GetFiles(folder, $"h-{personalCode}-*.*")
+            .Select(f => Path.GetFileNameWithoutExtension(f))
+            .Select(name =>
+            {
+                var parts = name.Split('-');
+                if (parts.Length < 3)
+                {
+                    return null;
+                }
+
+                return new { Year = int.TryParse(parts[2], out int y) ? y : 0 };
+            })
+            .Where(x => x != null && x.Year > 0)
+            .OrderByDescending(x => x!.Year)
+            .FirstOrDefault();
+
+        if (latest == null)
+        {
+            return NotFound();
+        }
+
+        return Ok(latest);
+    }
+
     private async Task<string> GetPersonalCodeAsync()
     {
         string? userId = await userContext.GetUserIdAsync();
