@@ -143,9 +143,7 @@ public sealed partial class AuthController(
     [HttpPost("login")]
     public async Task<ActionResult<AccessTokensDto>> Login(LoginUserDto loginUserDto)
     {
-        #region 2FA Authentication
-        //Implementation
-        #endregion
+
         IdentityUser? identityUser = await userManager.FindByNameAsync(loginUserDto.NationalCode);
 
         if (identityUser is null || !await userManager.CheckPasswordAsync(identityUser , loginUserDto.Password))
