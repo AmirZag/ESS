@@ -252,7 +252,7 @@ public sealed class AppSettingsController(
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
-    //[IdempotentRequest]
+    [IdempotentRequest]
     [HttpPost]
     public async Task<ActionResult<AppSettingsDto>> CreateAppSettings(
         CreateAppSettingsDto createAppSettingsDto,

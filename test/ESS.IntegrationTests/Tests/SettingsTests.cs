@@ -13,9 +13,8 @@ public sealed class SettingsTests(EssWebAppFactory factory) : IntegrationTestFix
 {
 
     [Fact]
-    public async Task CreateSettings_ShouldSucceed_WithValidParameters()
+    public async Task CreateSettings_ShouldSucceed_WithIdempotencyKey()
     {
-        //Arrange
         var dto = new CreateAppSettingsDto
         {
             Key = AppSettingsKey.CheckWeakPassword,
@@ -26,14 +25,18 @@ public sealed class SettingsTests(EssWebAppFactory factory) : IntegrationTestFix
 
         var client = await CreateAuthenticatedClientAsync(Admin.NationalCode, Admin.Password);
 
-        //Act
-        HttpResponseMessage response = await client.PostAsJsonAsync(AppSettings.Settings,dto);
+        using var request = new HttpRequestMessage(HttpMethod.Post, AppSettings.Settings)
+        {
+            Content = JsonContent.Create(dto)
+        };
+        request.Headers.Add("Idempotency-Key", Guid.NewGuid().ToString());
+        request.Headers.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/vnd.amard-ecc.hateoas+json"));
 
-        //Assert
+        var response = await client.SendAsync(request);
+
         Assert.Equal(HttpStatusCode.Created, response.StatusCode);
         Assert.NotNull(response.Headers.Location);
         Assert.NotNull(await response.Content.ReadFromJsonAsync<AppSettingsDto>());
-
     }
 
     [Fact]

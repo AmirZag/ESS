@@ -6,7 +6,6 @@ namespace ESS.Api.Middleware.Caching;
 
 public sealed class ETagMiddleware(RequestDelegate next)
 {
-
     private static readonly string[] ConcurrencyCheckMethods = [
         HttpMethods.Put,
         HttpMethods.Patch
@@ -16,7 +15,6 @@ public sealed class ETagMiddleware(RequestDelegate next)
         if (CanSkipETag(context))
         {
             await next(context);
-
             return;
         }
 
@@ -24,10 +22,9 @@ public sealed class ETagMiddleware(RequestDelegate next)
         string? ifNoneMatch = context.Request.Headers.IfNoneMatch.FirstOrDefault()?.Replace("\"", "");
         string? ifMatch = context.Request.Headers.IfMatch.FirstOrDefault()?.Replace("\"", "");
 
-        if(ConcurrencyCheckMethods.Contains(context.Request.Method) && !string.IsNullOrEmpty(ifMatch))
+        if (ConcurrencyCheckMethods.Contains(context.Request.Method) && !string.IsNullOrEmpty(ifMatch))
         {
             string currentETag = eTagStore.GetETag(resourceUri);
-
             if (!string.IsNullOrWhiteSpace(currentETag) && ifMatch != currentETag)
             {
                 context.Response.StatusCode = StatusCodes.Status412PreconditionFailed;
@@ -38,30 +35,39 @@ public sealed class ETagMiddleware(RequestDelegate next)
 
         Stream originalStream = context.Response.Body;
         using var memoryStream = new MemoryStream();
-        context.Response.Body = memoryStream;
 
-        await next(context);
-
-        if (IsETaggableResponse(context))
+        try
         {
-            memoryStream.Position = 0;
-            byte[] responseBody = await GetResponseBody(memoryStream);
-            string etag = GenerateETag(responseBody);
+            context.Response.Body = memoryStream;
+            await next(context);
 
-            eTagStore.SetETag(resourceUri, etag);
-            context.Response.Headers.ETag = $"\"{etag}\"";
-            context.Response.Body = originalStream;
-
-            if (context.Request.Method == HttpMethods.Get && ifNoneMatch == etag)
+            if (IsETaggableResponse(context))
             {
-                context.Response.StatusCode = StatusCodes.Status304NotModified;
-                context.Response.ContentLength = 0;
-                return;
-            }
-        }
+                memoryStream.Position = 0;
+                byte[] responseBody = await GetResponseBody(memoryStream);
+                string etag = GenerateETag(responseBody);
+                eTagStore.SetETag(resourceUri, etag);
+                context.Response.Headers.ETag = $"\"{etag}\"";
 
-        memoryStream.Position = 0;
-        await memoryStream.CopyToAsync(originalStream);
+                if (context.Request.Method == HttpMethods.Get && ifNoneMatch == etag)
+                {
+                    context.Response.StatusCode = StatusCodes.Status304NotModified;
+                    context.Response.ContentLength = 0;
+                    context.Response.Body = originalStream;
+                    return;
+                }
+            }
+
+            // Always restore the original stream before copying
+            context.Response.Body = originalStream;
+            memoryStream.Position = 0;
+            await memoryStream.CopyToAsync(originalStream);
+        }
+        finally
+        {
+            // Ensure original stream is always restored, even if an exception occurs
+            context.Response.Body = originalStream;
+        }
     }
 
     private static bool IsETaggableResponse(HttpContext context)
@@ -76,7 +82,6 @@ public sealed class ETagMiddleware(RequestDelegate next)
     {
         using var reader = new StreamReader(memoryStream, leaveOpen: true);
         memoryStream.Position = 0;
-
         string content = await reader.ReadToEndAsync();
         return Encoding.UTF8.GetBytes(content);
     }
@@ -84,7 +89,6 @@ public sealed class ETagMiddleware(RequestDelegate next)
     private static string GenerateETag(byte[] content)
     {
         byte[] hash = SHA512.HashData(content);
-
         return Convert.ToHexString(hash);
     }
 

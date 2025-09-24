@@ -1,25 +1,31 @@
 ﻿using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
+using FluentValidation;
 
 namespace ESS.Api.Middleware.Exceptions;
 
 public sealed class GlobalExceptionHandler(IProblemDetailsService problemDetailsService) : IExceptionHandler
 {
-    public ValueTask<bool> TryHandleAsync(
-        HttpContext httpContext, 
-        Exception exception, 
+    public async ValueTask<bool> TryHandleAsync(
+        HttpContext httpContext,
+        Exception exception,
         CancellationToken cancellationToken)
     {
-        return problemDetailsService.TryWriteAsync(new ProblemDetailsContext
+        if (exception is ValidationException)
+        {
+            return false;
+        }
+
+        return await problemDetailsService.TryWriteAsync(new ProblemDetailsContext
         {
             HttpContext = httpContext,
             Exception = exception,
             ProblemDetails = new ProblemDetails
             {
-                //uncomment if you want more details.
                 Type = exception.GetType().Name,
                 Title = "Internal Server Error",
-                Detail = "An error occurred while processing your request. Please try again"
+                Detail = "An error occurred while processing your request. Please try again",
+                Status = StatusCodes.Status500InternalServerError
             }
         });
     }
