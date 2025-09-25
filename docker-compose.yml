@@ -138,4 +138,17 @@ services:
     # - ${MINIO_CERT_PRIVATE}:/root/.minio/certs/private.key:ro
     networks:
     - amard_network
+ 
+  ess.client:
+    container_name: ClientUI
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    ports:
+      - "3001:3001"
+    depends_on:
+      - ess.api
+    networks:
+      - amard_network
+
 
