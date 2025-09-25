@@ -384,3 +384,4 @@ FodyWeavers.xsd
 /.containers/minio_data/.minio.sys
 /.containers/minio_data/ess-bucket/avatars/u_01990eb9-52cc-7501-9b94-7ed5690dd990/01997653-2e7f-77f6-8a90-41927b8d75e7.jpg/11fe2ff9-8445-47cb-86d8-af88482d8107
 /.containers/minio_data/ess-bucket/avatars/u_01990eb9-52cc-7501-9b94-7ed5690dd990/0199766f-ab86-76c0-a3b1-83fe36a7b9c1.jpg/35c63577-e8c2-4145-aa9e-4428227f9f1b
+/client
