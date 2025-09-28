@@ -1,6 +1,14 @@
 networks:
   amard_network:
     driver: bridge
+volumes:
+  pgadmin_data:
+    driver: local
+  postgres_data:
+    driver: local
+  minio_data:
+    driver: local
+  
 
 services:
   ess.api:
@@ -48,7 +56,7 @@ services:
       - Cors__AllowedOrigins__4=${CORS__ALLOWEDORIGINS__4}
       - Cors__AllowedOrigins__5=${CORS__ALLOWEDORIGINS__5}
       # MinIo
-      - MinIO__Endpoint=ess.minio:${MINIO_API_PORT}
+      - MinIO__Endpoint=MinioStorage:${MINIO_API_PORT}
       - MinIO__AccessKey=${MINIO_ACCESS_KEY}
       - MinIO__SecretKey=${MINIO_SECRET_KEY}
       - MinIO__BucketName=${MINIO_BUCKET_NAME}
@@ -60,8 +68,8 @@ services:
       - MelliPayamak__ApiUrl=${MELLIPAYAMAK_API_URL}
       - MelliPayamak__VerificationTemplate=${MELLIPAYAMAK_VERIFICATION_TEMPLATE}
     volumes:
-      - ${REPORTS_PAYMENT}:/app/reports/payment
-      - ${REPORTS_PERSONNEL}:/app/reports/personnel-file
+      - ${REPORTS_PAYMENT}:/app/reports/payment:ro
+      - ${REPORTS_PERSONNEL}:/app/reports/personnel-file:ro
       - ${CERT_FILE}:/certs/esscert.pfx:ro
     depends_on:
       - ess.postgres
@@ -78,22 +86,23 @@ services:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
-      - ./.containers/postgres_data:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql/data
     ports:
       - "${POSTGRES_PORT}:5432"
     networks:
       - amard_network
+    restart: unless-stopped
 
   ess.pgadmin:
     container_name: PgAdmin
-    image: dpage/pgadmin4:9.8.0
+    image: elestio/pgadmin:REL-9_8
     environment:
       PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL}
       PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD}
     ports:
       - "${PGADMIN_PORT}:80"
     volumes:
-      - ./.containers/pgadmin_data:/var/lib/pgadmin
+      - pgadmin_data:/var/lib/pgadmin
     depends_on:
       - ess.postgres
     networks:
@@ -133,11 +142,12 @@ services:
     - "${MINIO_API_PORT}:9000"
     - "${MINIO_CONSOLE_PORT}:9001"
     volumes:
-    - ./.containers/minio_data:/data
+      - minio_data:/data
     # - ${MINIO_CERT_PUBLIC}:/root/.minio/certs/public.crt:ro
     # - ${MINIO_CERT_PRIVATE}:/root/.minio/certs/private.key:ro
     networks:
     - amard_network
+    restart: unless-stopped
  
   ess.client:
     container_name: ClientUI

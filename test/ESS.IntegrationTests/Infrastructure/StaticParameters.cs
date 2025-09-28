@@ -19,9 +19,9 @@ public static class StaticParameters
     {
         public static class ValidEmployee
         {
-            public const string NationalCode = "2229670352";
-            public const string Password = "P@ssWord123";
-            public const string PhoneNumber = "09114374859";
+            public const string NationalCode = "2220008533";
+            public const string Password = "Rez@0911";
+            public const string PhoneNumber = "09351900775";
         }
 
         public static class ValidAdmin

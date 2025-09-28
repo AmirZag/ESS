@@ -38,7 +38,6 @@ using OpenTelemetry;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
-using Swashbuckle.AspNetCore.SwaggerGen;
 using CorsOptions = ESS.Api.Options.CorsOptions;
 
 namespace ESS.Api.Startup;

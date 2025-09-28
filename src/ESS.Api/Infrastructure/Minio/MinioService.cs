@@ -70,20 +70,29 @@ public sealed class MinioService(
     {
         try
         {
-            var removeObjectArgs = new RemoveObjectArgs()
+            var statArgs = new StatObjectArgs()
                 .WithBucket(options.Value.BucketName)
                 .WithObject(objectName);
 
-            await minioClient.RemoveObjectAsync(removeObjectArgs);
+            await minioClient.StatObjectAsync(statArgs);
 
-            logger.LogInformation("File deleted successfully: {ObjectName}", objectName);
+            var removeArgs = new RemoveObjectArgs()
+                .WithBucket(options.Value.BucketName)
+                .WithObject(objectName);
+
+            await minioClient.RemoveObjectAsync(removeArgs);
+            logger.LogInformation("File deleted: {ObjectName}", objectName);
+        }
+        catch (ObjectNotFoundException ex)
+        {
+            logger.LogInformation(ex, "Object Not Found: {ObjectName}", objectName);
         }
         catch (MinioException ex)
         {
-            logger.LogError(ex, "Error deleting file from MinIO: {ObjectName}", objectName);
-            throw new ApplicationException($"Failed to delete file: {ex.Message}", ex);
+            logger.LogError(ex, "Error deleting file: {ObjectName}", objectName);
         }
     }
+
     private async Task EnsureBucketExistsAsync()
     {
         try

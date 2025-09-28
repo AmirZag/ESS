@@ -32,7 +32,7 @@ if (app.Environment.IsDevelopment())
 
     await app.ApplyMigrationsAsync();
 
-    await app.SeedInitialDataAsync();
+    //await app.SeedInitialDataAsync();
 }
 
 app.UseHttpsRedirection();
@@ -51,6 +51,5 @@ app.UseMiddleware<ETagMiddleware>();
 app.MapControllers();
 
 await app.RunAsync();
-
 
 public partial class Program;

@@ -47,6 +47,7 @@
 	<ItemGroup>
 		<Folder Include="Database\Migrations\Application\" />
 		<Folder Include="Database\Migrations\Identity\" />
+		<Folder Include="Database\MigrationScripts\" />
 	</ItemGroup>
 
 </Project>
