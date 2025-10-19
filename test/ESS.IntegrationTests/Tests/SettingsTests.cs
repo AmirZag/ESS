@@ -30,7 +30,7 @@ public sealed class SettingsTests(EssWebAppFactory factory) : IntegrationTestFix
             Content = JsonContent.Create(dto)
         };
         request.Headers.Add("Idempotency-Key", Guid.NewGuid().ToString());
-        request.Headers.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/vnd.amard-ecc.hateoas+json"));
+        request.Headers.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/vnd.amirzag-ecc.hateoas+json"));
 
         var response = await client.SendAsync(request);
 

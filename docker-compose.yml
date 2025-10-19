@@ -1,5 +1,5 @@
 networks:
-  amard_network:
+  test_network:
     driver: bridge
 volumes:
   pgadmin_data:
@@ -75,7 +75,7 @@ services:
       - ess.postgres
       - ess.minio
     networks:
-      - amard_network
+      - test_network
 
 
   ess.postgres:
@@ -90,7 +90,7 @@ services:
     ports:
       - "${POSTGRES_PORT}:5432"
     networks:
-      - amard_network
+      - test_network
     restart: unless-stopped
 
   ess.pgadmin:
@@ -106,7 +106,7 @@ services:
     depends_on:
       - ess.postgres
     networks:
-      - amard_network
+      - test_network
 
   ess.seq:
     container_name: SeqLogging
@@ -119,7 +119,7 @@ services:
       - "${SEQ_PORT_HTTP}:80"
       - "${SEQ_PORT_INGEST}:5341"
     networks:
-      - amard_network
+      - test_network
 
   ess.aspire-dashboard:
     container_name: AspireDashboard
@@ -129,7 +129,7 @@ services:
     ports:
       - "${DASHBOARD_PORT}:18888"
     networks:
-      - amard_network
+      - test_network
 
   ess.minio:
     container_name: MinioStorage
@@ -146,7 +146,7 @@ services:
     # - ${MINIO_CERT_PUBLIC}:/root/.minio/certs/public.crt:ro
     # - ${MINIO_CERT_PRIVATE}:/root/.minio/certs/private.key:ro
     networks:
-    - amard_network
+    - test_network
     restart: unless-stopped
  
   ess.client:
@@ -159,6 +159,6 @@ services:
     depends_on:
       - ess.api
     networks:
-      - amard_network
+      - test_network
 
 

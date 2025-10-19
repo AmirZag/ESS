@@ -77,7 +77,7 @@ public static class DependencyInjection
             options.ApiVersionReader = ApiVersionReader.Combine(
                 new MediaTypeApiVersionReader(),
                 new MediaTypeApiVersionReaderBuilder()
-                    .Template("application/vnd.amard-ecc.hateoas.{version}+json")
+                    .Template("application/vnd.amirzag-ecc.hateoas.{version}+json")
                     .Build());
         }).AddMvc();
 
